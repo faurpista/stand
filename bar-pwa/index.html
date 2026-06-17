@@ -1023,17 +1023,21 @@ const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     const parsedDescription = parts.slice(2).join('|').trim();
     
     const currentPct = Math.max(0, Math.min(100, parsedPct));
-    const totalVolume = bottles[bottleId].size; // Ezt lekérheted az adatbázisodból az adott bottleId alapján
-    const currentCl = (totalVolume * (currentPct / 100)).toFixed(1); // 1 tizedesjegy pontosság (pl. 24.5)
+     // Ezt lekérheted az adatbázisodból az adott bottleId alapján
+     // 1 tizedesjegy pontosság (pl. 24.5)
 
     // 4. Frissítjük a felületedet (Bővített kód)
-    aiResult = { pct: currentPct, cl: currentCl, bottleId };
+    
     
     // Feltételezve, hogy van egy 'bottles' tömböd, amiben az összes üveg benne van:
     const bottleIndex = bottles.findIndex(b => b.id === bottleId);
-    
+    const totalVolume = bottles[bottleIndex].size;
+    const currentCl = (totalVolume * (currentPct / 100)).toFixed(1);
+    aiResult = { pct: currentPct, cl: currentCl, bottleId };
+
     if (bottleIndex !== -1) {
         // Átírjuk a tömbben az üveg adatait az AI által mért értékekre
+        
         bottles[bottleIndex].pct = currentPct;
         bottles[bottleIndex].currentCl = currentCl; // Ha tárolsz cl-t is
         
