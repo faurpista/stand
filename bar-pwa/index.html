@@ -609,8 +609,15 @@ function statusClass(pct) {
 }
 
 function bottleSVG(pct, cat) {
-  const col = CAT_COLORS[cat] || '#888';
-  const uid = cat.replace(/[\s\/]/g,'');
+  // 🚨 BIZTONSÁGI JAVÍTÁS: Ha a 'cat' (üveg ID) hiányzik vagy nem szöveg, adunk neki egy alapértelmezett értéket, hogy ne omoljon össze
+  const safeCat = cat ? String(cat) : 'unknown-bottle';
+  
+  // A szín kiválasztásánál megkeressük a kategória színét, ha nincs, adunk egy szép alapértelmezett színt
+  const col = (typeof CAT_COLORS !== 'undefined' ? CAT_COLORS[safeCat] : null) || '#2B6CB0';
+  
+  // Most már a safeCat változón (ami biztosan szöveg) hajtjuk végre a cserét a biztonságos egyedi ID-hoz (uid)
+  const uid = safeCat.replace(/[^a-zA-Z0-9]/g, '');
+  
   return `<svg class="bottle-svg" viewBox="0 0 44 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs><clipPath id="cp${uid}">
       <path d="M14 28 Q10 35 8 45 L8 90 Q8 96 14 96 L30 96 Q36 96 36 90 L36 45 Q34 35 30 28 L28 16 L26 10 L18 10 L16 16 Z"/>
