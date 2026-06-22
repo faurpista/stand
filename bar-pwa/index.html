@@ -876,10 +876,47 @@ reader.onload = ev => {
 reader.readAsDataURL(file);
 }
 window.handleFileUpload = handleFileUpload;
+/*
 function quickScan(id) {
   switchPage('kamera');
   document.getElementById('scan-bottle-select').value = id;
 }
+  */
+  async function quickScan(bottleId) {
+    // Biztonsági ellenőrzés: kaptunk-e érvényes szöveges ID-t?
+    if (!bottleId) {
+        if (typeof showToast === "function") showToast("❌ Hiba: Hiányzó üveg azonosító!");
+        return;
+    }
+
+    console.log(`🤖 QuickScan indítása a(z) '${bottleId}' üveghez...`);
+
+    // 1. Megkeressük a legördülő menüt, és átváltjuk a kiválasztott üvegre
+    const bottleSelect = document.getElementById('scan-bottle-select');
+    if (bottleSelect) {
+        bottleSelect.value = bottleId;
+        bottleSelect.dispatchEvent(new Event('change'));
+    }
+    const b = bottles.find(x => x.id === bottleId || x.id == bottleId);
+    if (b) {
+      // Ha a kamera oldalon van egy szöveges mező az üveg nevének (pl. 'ai-bottle-name')
+      const nameEl = document.getElementById('ai-bottle-name');
+      if (nameEl) {
+        nameEl.textContent = b.name;
+      }
+    }
+    // 2. Átváltjuk a képernyőt az AI Scan / Kamera oldalra
+    if (typeof switchPage === "function") {
+        switchPage('kamera');
+    }
+
+    // 3. Ha a kamerádnak vagy a képfeldolgozásnak azonnal szüksége van az ID-ra, elmentjük egy globális változóba
+    window.currentSelectBottleId = bottleId;
+
+    // Ha az alkalmazásodban van egy automatikus fotóbeolvasó indítás (pl. openScanner), azt ide teheted:
+    // if (typeof openScanner === "function") openScanner();
+}
+
 window.quickScan = quickScan;
 // ════════════════════════════════
 //  GEMINI AI
@@ -1040,7 +1077,7 @@ const resultBox = document.getElementById('ai-result');
       return null;
   }
 }
-
+/*
 function applyAiResult() {
   if (!aiResult || !aiResult.bottleId) return;
   const b = bottles.find(x=>x.id===aiResult.bottleId);
@@ -1052,6 +1089,29 @@ function applyAiResult() {
   resetScan();
   switchPage('leltár');
 }
+  */
+  function applyAiResult() {
+    if (!aiResult || !aiResult.bottleId) return;
+    const b = bottles.find(x=>x.id===aiResult.bottleId);
+    if (!b) return;
+    
+    // 1. Beírjuk az AI által mért százalékot
+    b.pct = aiResult.pct;
+    
+    // 🚨 AZ EGYETLEN ÚJ SOR: Kiszámoljuk a pontos cl értéket is az üveg mérete (b.size) alapján!
+    // Például: 70 cl * (64 / 100) = 45 cl (Kerekítve, hajszálpontosan 1 cl-es pontossággal)
+    b.currentCl = Math.round(b.size * (aiResult.pct / 100));
+   
+    // 2. Lefuttatjuk a te jól bevált mentési és újrarendelési folyamataidat
+    save(); 
+    render();
+    
+    // 3. Felugró üzenet és a felület tiszta lappal való visszaállítása
+    showToast(`✓ ${b.name}: ${b.pct}% alkalmazva`);
+    resetScan();
+    switchPage('leltár');
+  }
+  
 window.applyAiResult = applyAiResult;
 function resetScan() {
   document.getElementById('ai-result').classList.remove('visible');
