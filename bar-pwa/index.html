@@ -531,16 +531,9 @@ header {
 <!-- 1. LÉPÉS: Megmondjuk a böngészőnek, honnan töltse le a Google programját (Ez a térkép) -->
 
 <script  type="module">
-  //const { GoogleGenAI } = window.ai;
+
   document.addEventListener("DOMContentLoaded", () => {
-  
-    // API kulcs beviteli mező figyelése
-    /*
-    const apiKeyInput = document.getElementById('api-key-input');
-    if (apiKeyInput) {
-      apiKeyInput.addEventListener('input', saveApiKey);
-    }
-  */
+ 
     // Fájl feltöltés mező figyelése
     const fileInput = document.getElementById('file-upload-input'); // használd az HTML-ben megadott ID-t
     if (fileInput) {
@@ -550,11 +543,7 @@ header {
   document.getElementById('btn-add-bottle').addEventListener('click', () => {
     openModal();
   });
-  // ==========================================
-  // 2. LÉPÉS: EZT ÍRD KÖZVETLENÜL AZ IMPORT ALÁ (INICIALIZÁLÁS)
-  // ==========================================
-  const key = "AQ.Ab8RN6IOmK-7QkVvQ8pw6xov-HdJ_Ypk8Q9yF81qQ3v5mo4ioQ"; // Itt add meg a kulcsodat stringként
-  //const ai = new GoogleGenAI({ apiKey: key });  
+ 
 // ════════════════════════════════
 //  DATA
 // ════════════════════════════════
@@ -565,19 +554,23 @@ const CAT_COLORS = {
 };
 
 let bottles = JSON.parse(localStorage.getItem('bar_bottles') || 'null') || [
-  {id:1,name:'Jameson',cat:'Whisky',size:70,pct:78},
-  {id:2,name:'Bacardi',cat:'Rum',size:70,pct:42},
-  {id:3,name:'Absolut',cat:'Vodka',size:70,pct:91},
-  {id:4,name:"Hendrick's",cat:'Gin',size:70,pct:25},
-  {id:5,name:'Patrón Silver',cat:'Tequila',size:70,pct:60},
-  {id:6,name:"Jack Daniel's",cat:'Whisky',size:100,pct:15},
-  {id:7,name:'Havana 7',cat:'Rum',size:70,pct:55},
-  {id:8,name:'Grey Goose',cat:'Vodka',size:70,pct:88},
-  {id:9,name:'Bulleit Bourbon',cat:'Whisky',size:70,pct:7},
-  {id:10,name:'Campari',cat:'Likőr',size:70,pct:33},
-  {id:11,name:'Tanqueray',cat:'Gin',size:70,pct:72},
-  {id:12,name:'Palinka Ági',cat:'Pálinka',size:50,pct:48},
+{ id: "jagermeister_1L", name: "Jägermeister 1L", size: 100, currentCl: 0, pct: 0 },
+{ id: "absolut_vodka_07L", name: "Absolut Vodka 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "jack_daniels_07L", name: "Jack Daniel's 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "bacardi_carta_blanca_1L", name: "Bacardi Carta Blanca 1L", size: 100, currentCl: 0, pct: 0 },
+{ id: "captain_morgan_07L", name: "Captain Morgan Spiced 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "baileys_original_07L", name: "Baileys Original 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "unicum_05L", name: "Unicum 0.5L (Gömb)", size: 50, currentCl: 0, pct: 0 },
+{ id: "gin_beefeater_07L", name: "Beefeater Gin 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "tequila_olmecca_07L", name: "Olmeca Tequila 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "jameson_whiskey_1L", name: "Jameson Whiskey 1L", size: 100, currentCl: 0, pct: 0 },
+{ id: "finlandia_vodka_07L", name: "Finlandia Vodka 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "malibu_rum_07L", name: "Malibu Rum 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "hennessy_cognac_07L", name: "Hennessy Cognac 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "aperol_1L", name: "Aperol 1L", size: 100, currentCl: 0, pct: 0 },
+{ id: "tatratea_original_07L", name: "Tatratea Original 0.7L", size: 70, currentCl: 0, pct: 0 }
 ];
+
 let nextId = Math.max(...bottles.map(b=>b.id), 0) + 1;
 let editId = null;
 let aiResult = null;
@@ -585,15 +578,7 @@ let cameraStream = null;
 let deferredInstall = null;
 
 function save() { localStorage.setItem('bar_bottles', JSON.stringify(bottles)); }
-/*function getApiKey() { return localStorage.getItem('GEMINI_API_KEY') || ''; }
-function saveApiKey() {
-  const k = document.getElementById('api-key-input').value.trim();
-  localStorage.setItem('GEMINI_API_KEY', k);
-  updateApiIndicator();
-}
-  */
 window.save = save;
-//window.saveApiKey = saveApiKey;
 // ════════════════════════════════
 //  NAVIGATION
 // ════════════════════════════════
@@ -950,6 +935,7 @@ const resultBox = document.getElementById('ai-result');
       formData.append("image", imageBlob, "stand_capture.jpg");
       //https://ocsi66-ingatlan.hf.space/api/estimate
       // 3. Kérés a saját szerverre
+      // "https://ocsi66-deep-stand.hf.space/api/predict-level"
       const response = await fetch("https://ocsi66-deep-stand.hf.space/api/predict-level", {
           method: "POST",
           body: formData
