@@ -714,6 +714,7 @@ function adj(id, d) {
   b.pct = Math.max(0, Math.min(100, b.pct+d));
   save(); render();
 }
+window.adj = adj;  
 function setPct(id, val) {
   const b = bottles.find(x=>x.id===id);
   if (!b) return;
