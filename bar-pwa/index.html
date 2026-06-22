@@ -637,6 +637,12 @@ function filteredSorted() {
 }
 
 function render() {
+
+  bottles.forEach(b => {
+    if (!b.cat) {
+      b.cat = b.name ? b.name.split(' ')[0] : 'Egyéb';
+    }
+  });
   const list = filteredSorted();
   const cf = document.getElementById('cat-filter');
   const prev = cf.value;
