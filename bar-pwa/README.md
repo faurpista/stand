@@ -38,17 +38,6 @@ Majd böngészőben: `http://localhost:8080`
 
 ---
 
-## Google Gemini API kulcs megszerzése
-
-1. Menj: https://aistudio.google.com/app/apikey
-2. Jelentkezz be Google fiókkal
-3. Kattints: **Create API key**
-4. Másold be a kulcsot az appba → **AI Scan** fül → API kulcs mező
-
-> Az ingyenes tier havonta 1 millió tokent tartalmaz (bőven elég standoláshoz).
-
----
-
 ## Használat
 
 ### Leltár fül
@@ -81,7 +70,7 @@ Majd böngészőben: `http://localhost:8080`
 ---
 
 ## Technikai adatok
-- **AI:** Google Gemini 1.5 Flash (vision)
+- **AI:** Google Gemini 2.5 Flash (vision)
 - **Adattárolás:** LocalStorage (eszközön marad, nem tölt fel semmit)
 - **PWA:** Service Worker + Web App Manifest
 - **Kamera:** MediaDevices API (hátsó kamera preferált)
