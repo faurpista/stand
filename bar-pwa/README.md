@@ -16,7 +16,7 @@ Mivel az alkalmazás egy tiszta frontend PWA kliens (a szerverkapcsolat és a mo
 
 ### 1. Szükséges fájlok
 A projekt működéséhez az alábbi fájlokat kell feltöltened a választott tárhelyre:
-```text
+
 index.html      - A teljes felhasználói felület és logika
 manifest.json   - A PWA telepíthetőségi beállításai
 sw.js           - A Service Worker az offline működésért és cache-elésért
