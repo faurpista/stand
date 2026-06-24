@@ -1,71 +1,27 @@
-# 🍾 Bár Leltár PWA — Telepítési útmutató
+# 🍾 Bár Leltár PWA — Telepítési és Használati Útmutató
 
-## Mi ez?
-Egy Progressive Web App (PWA) kocsmák italos üveg standolásához.
-- Üvegek töltöttségi szintjének nyilvántartása
-- **AI kameraolvasás** — fotóz le egy üveget, a Gemini AI megbecsüli a szintet
-- Offline is működik (Service Worker)
-- Telepíthető mobilra kezdőképernyőre
+## 📱 Mi ez?
+Egy **Progressive Web App (PWA)**, amelyet kifejezetten vendéglátóipari egységek, kocsmák italos üveg standolásának (leltározásának) megkönnyítésére fejlesztettünk ki. 
 
----
-
-## Telepítés
-
-### 1. Fájlok elhelyezése
-A következő fájlokat töltsd fel egy webszerverre (vagy nyisd meg lokálisan):
-```
-index.html
-manifest.json
-sw.js
-icon-192.png
-icon-512.png
-```
-
-> **Fontos:** A kamera és a Service Worker csak HTTPS kapcsolaton működik!
-> Lokális teszteléshez `localhost` is megfelelő.
-
-### 2. Egyszerű lokális szerver (opcionális)
-Ha van Python telepítve:
-```bash
-python3 -m http.server 8080
-```
-Majd böngészőben: `http://localhost:8080`
-
-### 3. Ingyenes tárhely opciók
-- **GitHub Pages** — ingyen, HTTPS automatikus
-- **Netlify** — drag & drop deploy, ingyen
-- **Vercel** — ingyen, gyors
+- **Intelligens AI kameraolvasás** — Fotózz le egy üveget, és a saját, egyedileg tanított neurális hálónk automatikusan megbecsüli a benne lévő folyadék szintjét.
+- **PWA architektúra** — Mobilra natív appként telepíthető a kezdőképernyőre.
+- **Modern Backend integráció** — A szintbecslést egy dedikált szerver végzi a háttérben, nincs szükség kliensoldali API kulcsokra vagy bonyolult konfigurációra.
+- **Offline működés** — A Service Workernek köszönhetően az alapfunkciók hálózati kapcsolat nélkül is elérhetőek.
 
 ---
 
-## Használat
+## 🚀 Telepítés és Hosztolás
 
-### Leltár fül
-- Üvegek listázása, szerkesztése
-- `−` / `+` gombokkal 5%-onként állítható a szint
-- Közvetlenül beírható a százalék
-- `🤖` gomb: gyors AI scan az adott üveghez
+Mivel az alkalmazás egy tiszta frontend PWA kliens (a szerverkapcsolat és a modellkezelés be van ágyazva a kódba), **nincs szükség helyi Python szerverre vagy egyéb háttérprogram futtatására** a telepítéshez. Csak a statikus fájlokat kell közzétenni.
 
-### AI Scan fül
-1. Add meg a Gemini API kulcsot
-2. Válaszd ki, melyik üveghez rendelod az eredményt
-3. **Kamera** gombbal indítsd el a kamerát (hátsó kamera automatikusan)
-4. Vagy **Kép** gombbal tölts fel meglévő fotót
-5. **Elemzés** → az AI megbecsüli a töltöttségi szintet
-6. **Alkalmaz** → frissíti az üveg szintjét a leltárban
-
-### PWA telepítés mobilra
-- **Android (Chrome):** Menüben → "Hozzáadás a kezdőképernyőhöz"
-- **iOS (Safari):** Megosztás → "Hozzáadás a főképernyőre"
-- **Desktop Chrome:** Cím sávban a telepítés ikon
-
----
-
-## Tippek az AI pontosságához
-- Jó megvilágítás sokat segít
-- Tartsd a kamerát merőlegesen az üvegre
-- Az üveg teljes magassága látszódjon
-- Háttér ne legyen teli üvegekkel
+### 1. Szükséges fájlok
+A projekt működéséhez az alábbi fájlokat kell feltöltened a választott tárhelyre:
+```text
+index.html      - A teljes felhasználói felület és logika
+manifest.json   - A PWA telepíthetőségi beállításai
+sw.js           - A Service Worker az offline működésért és cache-elésért
+icon-192.png    - Alkalmazásikon (mobil felületre)
+icon-512.png    - Alkalmazásikon (indítóképernyőre)
 
 ---
 
