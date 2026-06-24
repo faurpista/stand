@@ -714,7 +714,7 @@ function adj(id, d) {
   b.pct = Math.max(0, Math.min(100, b.pct+d));
   save(); render();
 }
-window.adj = adj;  
+window.adj = adj;
 function setPct(id, val) {
   const b = bottles.find(x=>x.id===id);
   if (!b) return;
@@ -1095,7 +1095,10 @@ function applyAiResult() {
     if (!aiResult || !aiResult.bottleId) return;
     const b = bottles.find(x=>x.id===aiResult.bottleId);
     if (!b) return;
-    
+    const scanBar = document.getElementById('scanning-bar');
+    if (scanBar) {
+        scanBar.classList.remove('active');
+    }
     // 1. Beírjuk az AI által mért százalékot
     b.pct = aiResult.pct;
     
@@ -1117,6 +1120,10 @@ window.applyAiResult = applyAiResult;
 function resetScan() {
   document.getElementById('ai-result').classList.remove('visible');
   aiResult = null;
+  const scanBar = document.getElementById('scanning-bar');
+    if (scanBar) {
+        scanBar.classList.remove('active');
+    }
 }
 window.resetScan = resetScan;
 // ════════════════════════════════
