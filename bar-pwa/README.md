@@ -30,6 +30,9 @@ icon-512.png    - Alkalmazásikon (indítóképernyőre)
 - **Adattárolás:** LocalStorage (eszközön marad, nem tölt fel semmit)
 - **PWA:** Service Worker + Web App Manifest
 - **Kamera:** MediaDevices API (hátsó kamera preferált)
+
+---
+
 ## 🛠️ Használati Útmutató
 ### Leltár fül
 Üvegek kezelése: Az aktuális italkészlet listázása és gyors áttekintése.
@@ -60,6 +63,8 @@ iOS / iPhone (Apple Safari): Kattints a képernyő alján lévő Megosztás ikon
 
 Asztali PC/Laptop (Chrome/Edge): A címsor jobb szélén megjelenő telepítés ikonra kattintva külön ablakos appként futtatható.
 
+---
+
 ## 📸 Tippek a tűpontos AI méréshez
 A saját fejlesztésű neurális hálónk precíz munkájához érdemes betartani az alábbi fotózási szabályokat:
 
@@ -70,3 +75,6 @@ Teljes láthatóság: Az üvegnek a talpától a kupakjáig teljes egészében b
 Tiszta háttér: Lehetőleg ne legyen a fotózott üveg mögött közvetlenül egy másik, teli üveg, mert ez megzavarhatja a modellt a folyadékszint detektálásakor.
 
 Megfelelő fényviszonyok: Kerüld a pult alatti túl sötét sarkokat vagy a közvetlen, erős háttérfényt (pl. ablak előtt). A szórt, normál kocsmai megvilágítás a legoptimálisabb.
+
+
+---
