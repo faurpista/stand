@@ -1103,9 +1103,24 @@ const resultBox = document.getElementById('ai-result');
 }
 
   function applyAiResult() {
-    if (!aiResult || !aiResult.bottleId) return;
-    const b = bottles.find(x=>x.id===aiResult.bottleId);
-    if (!b) return;
+  try{
+    if (!aiResult) {
+      alert("Hiba: Nincs aiResult adat!");
+      return;
+  }
+  if (!aiResult.bottleId) {
+      alert("Hiba: Az aiResult nem tartalmaz bottleId-t!");
+      return;
+  }
+
+  // Két egyenlőségjelet (==) használunk, hogy a szám/szöveg típuseltérés ne okozzon hibát
+  const b = bottles.find(x => x.id == aiResult.bottleId);
+  
+  if (!b) {
+      alert(`Hiba: Nem található üveg ezzel az ID-val: ${aiResult.bottleId}`);
+      return;
+  }
+
     const scanBar = document.getElementById('scanning-bar');
     if (scanBar) {
         scanBar.classList.remove('active');
@@ -1125,6 +1140,10 @@ const resultBox = document.getElementById('ai-result');
     showToast(`✓ ${b.name}: ${b.pct}% alkalmazva`);
     resetScan();
     switchPage('leltár');
+  } catch (error) {
+    // Ha bármi váratlan hiba történik, a telefon kijelzőjére kiírja a pontos hibaüzenetet!
+    alert("Kódhiba futás közben: " + error.message);
+}
   }
   
 window.applyAiResult = applyAiResult;
