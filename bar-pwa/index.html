@@ -524,16 +524,25 @@ header {
 <script  type="module">
 
   document.addEventListener("DOMContentLoaded", () => {
- 
-    // Fájl feltöltés mező figyelése
-    const fileInput = document.getElementById('file-upload-input'); // használd az HTML-ben megadott ID-t
+    // 1. Fájl feltöltés mező figyelése
+    const fileInput = document.getElementById('file-upload-input');
     if (fileInput) {
       fileInput.addEventListener('change', handleFileUpload);
     }
-  });
-  document.getElementById('btn-add-bottle').addEventListener('click', () => {
-    openModal();
-  });
+
+    // 2. Az Új üveg hozzáadása gomb figyelése (BEKERÜLT IDE!)
+    const addBottleBtn = document.getElementById('btn-add-bottle');
+    if (addBottleBtn) {
+        addBottleBtn.addEventListener('click', () => {
+            openModal();
+        });
+    }
+    
+    // 3. BIZTONSÁGI LÉPÉS: Itt indítsd el az adatok betöltését és a rajzolást is,
+    // hogy a telefonon biztosan legyen leltár induláskor!
+    if (typeof loadData === "function") loadData(); 
+    if (typeof render === "function") render();
+});
  
 // ════════════════════════════════
 //  DATA
