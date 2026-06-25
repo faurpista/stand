@@ -1,11 +1,8 @@
-// vercel.json
 {
-  "buildCommand": "exit 0",
-  "outputDirectory": "bar-pwa",
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ]
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
