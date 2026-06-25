@@ -522,7 +522,7 @@ header {
 <!-- 1. LÉPÉS: Megmondjuk a böngészőnek, honnan töltse le a Google programját (Ez a térkép) -->
 
 <script  type="module">
-
+/*
   document.addEventListener("DOMContentLoaded", () => {
     // 1. Fájl feltöltés mező figyelése
     const fileInput = document.getElementById('file-upload-input');
@@ -543,7 +543,44 @@ header {
     if (typeof loadData === "function") loadData(); 
     if (typeof render === "function") render();
 });
- 
+*/
+document.addEventListener("DOMContentLoaded", () => {
+    
+  // 1. Fájl feltöltés mező figyelése
+  const fileInput = document.getElementById('file-upload-input');
+  if (fileInput) {
+      fileInput.addEventListener('change', handleFileUpload);
+  }
+
+  // 2. Új üveg hozzáadása gomb (Modal megnyitása)
+  const addBottleBtn = document.getElementById('btn-add-bottle');
+  if (addBottleBtn) {
+      addBottleBtn.addEventListener('click', () => {
+          if (typeof openModal === "function") openModal();
+      });
+  }
+
+  // 3. Törlés gombok figyelése (Delegált kezelés - Androidra optimalizálva)
+  // Mivel a törlés gombok a kártyákon vannak, amik dinamikusan jönnek létre,
+  // a legjobb, ha a teljes dokumentumot figyeljük a kattintásra!
+  document.body.addEventListener('click', (event) => {
+      // Megnézzük, hogy a kattintott elemen vagy annak szülőjén rajta van-e a törlés osztály/ID
+      // Cseréld ki a '.btn-delete' részt a te törlés gombod pontos osztályára vagy ID-jára!
+      const deleteBtn = event.target.closest('.del-btn') || event.target.closest('[data-action="delete"]');
+      
+      if (deleteBtn) {
+          // Kiszedjük az üveg ID-ját a gomb attribútumából (pl. <button data-id="12">)
+          const bottleId = deleteBtn.getAttribute('data-id');
+          if (bottleId && typeof deleteBottle === "function") {
+              deleteBottle(bottleId);
+          }
+      }
+  });
+
+  // 4. Kezdő adatok betöltése és felület kirajzolása
+  if (typeof loadData === "function") loadData(); 
+  if (typeof render === "function") render();
+}); 
 // ════════════════════════════════
 //  DATA
 // ════════════════════════════════
