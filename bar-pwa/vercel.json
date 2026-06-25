@@ -1,0 +1,11 @@
+// vercel.json
+{
+  "buildCommand": "exit 0",
+  "outputDirectory": "bar-pwa",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
