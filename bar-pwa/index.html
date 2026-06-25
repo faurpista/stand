@@ -1084,7 +1084,7 @@ const resultBox = document.getElementById('ai-result');
           if (typeof showToast === "function") {
               showToast('✓ AI becslés kész: ' + currentPct + '%');
           }
-
+          window.isAnalyzing = false; 
           return aiResult;
       } else {
           throw new Error(data.error || "Ismeretlen szerveroldali hiba.");
