@@ -694,7 +694,7 @@ function render() {
           onkeydown="event.stopPropagation()">
         <button class="adj-btn" onclick="event.stopPropagation();adj(${safeId},5)">+</button>
       </div>
-      <div class="ai-badge" onclick="event.stopPropagation();quickScan(${safeId})" title="AI scan">🤖</div>
+      <div class="ai-badge" onclick="event.stopPropagation();quickScan('${safeId}')" title="AI scan">🤖</div>
     </div>`;
   }).join('');
   renderStats();
