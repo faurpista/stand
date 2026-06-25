@@ -1112,59 +1112,71 @@ const resultBox = document.getElementById('ai-result');
 }
 
   function applyAiResult() {
-  try{
-    if (!aiResult) {
-      alert("Hiba: Nincs aiResult adat!");
-      return;
-  }
-  /*
-  if (!aiResult.bottleId) {
-      alert("Hiba: Az aiResult nem tartalmaz bottleId-t!");
-      return;
-  }
-      */
- // 💡 DIREKT KIOLVASÁS: Megnézzük, mi van kiválasztva a legördülő menüben (select)
-        // Cseréld le a 'bottle-select' ID-t a te HTML select meződ pontos ID-jára!
-        const selectElement = document.getElementById('scan-bottle-select'); 
-        
-        // Elsőként a select-ből próbáljuk venni az ID-t, ha az nincs, akkor az aiResult-ból
-        let targetBottleId = (selectElement ? selectElement.value : null) || aiResult.bottleId;
+    try {
+      if (!aiResult) {
+          alert("Hiba: Nincs aiResult adat!");
+          return;
+      }
 
-        if (!targetBottleId) {
-            alert("Hiba: A legördülő menüből nem sikerült kiolvasni a kijelölt üveg ID-ját!");
-            return;
-        }
-  // Két egyenlőségjelet (==) használunk, hogy a szám/szöveg típuseltérés ne okozzon hibát
-  const b = bottles.find(x => x.id == aiResult.bottleId);
-  
-  if (!b) {
-      alert(`Hiba: Nem található üveg ezzel az ID-val: ${aiResult.bottleId}`);
-      return;
-  }
+      // 💡 UNIVERZÁLIS KERESÉS: Megkeressük a legördülő menüt ID nélkül is
+      // Megnézzük az összes select elemet az oldalon, vagy a 'bottle-select' ID-t
+      const selectElement = document.getElementById('scan-bottle-select') || document.querySelector('select'); 
+      
+      let targetBottleId = null;
+      
+      if (selectElement) {
+          // Ha a select-nek van kijelölt értéke, azt használjuk
+          targetBottleId = selectElement.value;
+          
+          // HA A VALUE ÜRES, megpróbáljuk kiszedni a kiválasztott opció szövegét vagy data-id-ját
+          if (!targetBottleId && selectElement.selectedIndex >= 0) {
+              const selectedOption = selectElement.options[selectElement.selectedIndex];
+              targetBottleId = selectedOption.value || selectedOption.getAttribute('data-id');
+          }
+      }
 
-    const scanBar = document.getElementById('scanning-bar');
-    if (scanBar) {
-        scanBar.classList.remove('active');
-    }
-    // 1. Beírjuk az AI által mért százalékot
-    b.pct = aiResult.pct;
-    
-    // 🚨 AZ EGYETLEN ÚJ SOR: Kiszámoljuk a pontos cl értéket is az üveg mérete (b.size) alapján!
-    // Például: 70 cl * (64 / 100) = 45 cl (Kerekítve, hajszálpontosan 1 cl-es pontossággal)
-    b.currentCl = Math.round(b.size * (aiResult.pct / 100));
-   
-    // 2. Lefuttatjuk a te jól bevált mentési és újrarendelési folyamataidat
-    save(); 
-    render();
-    
-    // 3. Felugró üzenet és a felület tiszta lappal való visszaállítása
-    showToast(`✓ ${b.name}: ${b.pct}% alkalmazva`);
-    resetScan();
-    switchPage('leltár');
+      // Ha még mindig nincs meg, végső mentőövként az aiResult-ból vesszük
+      targetBottleId = targetBottleId || aiResult.bottleId;
+
+      if (!targetBottleId || targetBottleId === "") {
+          alert("Hiba: A legördülő menü létezik, de nincs érvényes VALUE (ID) rendelve a kiválasztott üveghez!");
+          return;
+      }
+
+      // Két egyenlőségjellel keressük meg az üveget a listában (szám/szöveg toleráns)
+      const b = bottles.find(x => x.id == targetBottleId);
+      
+      if (!b) {
+          alert(`Hiba: Nem található üveg ezzel az ID-val a leltárban: ${targetBottleId}`);
+          return;
+      }
+
+      const scanBar = document.getElementById('scanning-bar');
+      if (scanBar) {
+          scanBar.classList.remove('active');
+      }
+
+      // 1. Beírjuk az AI által mért százalékot
+      b.pct = aiResult.pct;
+      
+      const bottleSize = Number(b.size) || 0;
+      const aiPct = Number(aiResult.pct) || 0;
+      
+      // Kiszámoljuk a pontos cl értéket
+      b.currentCl = Math.round(bottleSize * (aiPct / 100));
+     
+      // 2. Mentési és újrarendelési folyamatok
+      save(); 
+      render();
+      
+      // 3. Felugró üzenet és visszaállítás
+      showToast(`✓ ${b.name}: ${b.pct}% alkalmazva`);
+      resetScan();
+      switchPage('leltár');
+
   } catch (error) {
-    // Ha bármi váratlan hiba történik, a telefon kijelzőjére kiírja a pontos hibaüzenetet!
-    alert("Kódhiba futás közben: " + error.message);
-}
+      alert("Kódhiba futás közben: " + error.message);
+  }
   }
   
 window.applyAiResult = applyAiResult;
