@@ -379,15 +379,6 @@ header {
 
       <div class="camera-header">AI SZINTMÉRÉS</div>
       <div class="camera-sub">Fotózd le az üveget — az AI megbecsüli a töltöttségi szintet</div>
-
-      <!-- API KEY SETUP
-      <div class="api-setup">
-        <label>Google Gemini API kulcs</label>
-       <input type="password" id="api-key-input" placeholder="AIza..." autocomplete="off" oninput="saveApiKey()">
-        <input type="text" id="api-key-input">
-        <div class="hint">Ingyenes kulcs: <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a> → Get API key</div>
-      </div>
-    -->
       <!-- BOTTLE SELECT -->
       <div class="bottle-select-bar">
         <label>Melyik üveghez rendeld az eredményt?</label>
@@ -610,13 +601,27 @@ function statusClass(pct) {
 
 function bottleSVG(pct, cat) {
   // 🚨 BIZTONSÁGI JAVÍTÁS: Ha a 'cat' (üveg ID) hiányzik vagy nem szöveg, adunk neki egy alapértelmezett értéket, hogy ne omoljon össze
-  const safeCat = cat ? String(cat) : 'unknown-bottle';
+  //const safeCat = cat ? String(cat) : 'unknown-bottle';
+  let resolvedCat = cat;
+  let uid = cat; // Alapértelmezetten maga a cat paraméter lesz az egyedi ID alapja
+
+  // 1. Megkeressük a bottles tömbben azt az elemet, aminek az 'id'-ja egyezik a paraméterrel
+  if (typeof bottles !== 'undefined' && bottles) {
+    const foundBottle = bottles.find(b => b.id === cat || b.id == cat);
+    if (foundBottle) {
+      resolvedCat = foundBottle.cat; // Megvan a szöveges kategória: "bor", "gin", stb.
+      uid = foundBottle.id;        // Az üveg teljesen egyedi ID-ja a maszkhoz
+    }
+  }
+
+  // 🚨 BIZTONSÁGI JAVÍTÁS: Ha a kategória hiányzik vagy nem szöveg, adunk neki egy alapértelmezett értéket
+  const safeCat = resolvedCat ? String(resolvedCat) : 'unknown-bottle';
   
   // A szín kiválasztásánál megkeressük a kategória színét, ha nincs, adunk egy szép alapértelmezett színt
   const col = (typeof CAT_COLORS !== 'undefined' ? CAT_COLORS[safeCat] : null) || '#2B6CB0';
   
   // Most már a safeCat változón (ami biztosan szöveg) hajtjuk végre a cserét a biztonságos egyedi ID-hoz (uid)
-  const uid = safeCat.replace(/[^a-zA-Z0-9]/g, '');
+  //const uid = safeCat.replace(/[^a-zA-Z0-9]/g, '');
   
   return `<svg class="bottle-svg" viewBox="0 0 44 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs><clipPath id="cp${uid}">
@@ -877,12 +882,7 @@ reader.onload = ev => {
 reader.readAsDataURL(file);
 }
 window.handleFileUpload = handleFileUpload;
-/*
-function quickScan(id) {
-  switchPage('kamera');
-  document.getElementById('scan-bottle-select').value = id;
-}
-  */
+
   async function quickScan(bottleId) {
     // Biztonsági ellenőrzés: kaptunk-e érvényes szöveges ID-t?
     if (!bottleId) {
@@ -891,7 +891,9 @@ function quickScan(id) {
     }
 
     console.log(`🤖 QuickScan indítása a(z) '${bottleId}' üveghez...`);
-
+    if (typeof switchPage === "function") {
+      switchPage('kamera');
+  }
     // 1. Megkeressük a legördülő menüt, és átváltjuk a kiválasztott üvegre
     const bottleSelect = document.getElementById('scan-bottle-select');
     if (bottleSelect) {
@@ -906,16 +908,9 @@ function quickScan(id) {
         nameEl.textContent = b.name;
       }
     }
-    // 2. Átváltjuk a képernyőt az AI Scan / Kamera oldalra
-    if (typeof switchPage === "function") {
-        switchPage('kamera');
-    }
-
+    
     // 3. Ha a kamerádnak vagy a képfeldolgozásnak azonnal szüksége van az ID-ra, elmentjük egy globális változóba
     window.currentSelectBottleId = bottleId;
-
-    // Ha az alkalmazásodban van egy automatikus fotóbeolvasó indítás (pl. openScanner), azt ide teheted:
-    // if (typeof openScanner === "function") openScanner();
 }
 
 window.quickScan = quickScan;
@@ -944,16 +939,7 @@ function base64ToBlob(base64Data, contentType = 'image/jpeg') {
 window.isAnalyzing = false;
 // AZ ÚJ ELEMZŐ FÜGGVÉNY - A RÉGI HELYÉRE
 async function analyzeImage(base64Image, bottleId) {
-  // 🚨 PONTOS ILLESZTÉS A TE HTML KÓDODHOZ:
-  // Megkeressük a "Beolvasott kép" alatti százalékjelzőt és a funkciógombokat
-  /*
-  const pctDisplay = document.querySelector('.preview-container span') || document.getElementById('ai-percentage-display');
-  const descEl = document.getElementById('ai-description') || document.getElementById('desc-el');
   
-  // Megkeressük a gombokat a szövegük alapján, ha nincs rajtuk fix ID
-  const applyBtn = document.getElementById('apply-btn') || Array.from(document.querySelectorAll('button')).find(el => el.textContent.includes('Alkalmaz'));
-  const actionBtns = document.getElementById('action-btns') || document.querySelector('.action-buttons') || applyBtn?.parentElement;
-*/
 if (window.isAnalyzing) return null;
     
 // Lecsukjuk a sorompót
@@ -1078,19 +1064,7 @@ const resultBox = document.getElementById('ai-result');
       return null;
   }
 }
-/*
-function applyAiResult() {
-  if (!aiResult || !aiResult.bottleId) return;
-  const b = bottles.find(x=>x.id===aiResult.bottleId);
-  if (!b) return;
-  b.pct = aiResult.pct;
- 
-  save(); render();
-  showToast(`✓ ${b.name}: ${b.pct}% alkalmazva`);
-  resetScan();
-  switchPage('leltár');
-}
-  */
+
   function applyAiResult() {
     if (!aiResult || !aiResult.bottleId) return;
     const b = bottles.find(x=>x.id===aiResult.bottleId);
@@ -1207,15 +1181,7 @@ function installPWA() {
   deferredInstall.userChoice.then(() => { deferredInstall = null; });
 }
 window.installPWA = installPWA;
-// ════════════════════════════════
-//  API INDICATOR
-// ════════════════════════════════
-/*
-function updateApiIndicator() {
-  const k = getApiKey();
-  document.getElementById('api-indicator').className = k.length > 10 ? 'ok' : '';
-}
-*/
+
 // ════════════════════════════════
 //  INIT
 // ════════════════════════════════
@@ -1223,12 +1189,6 @@ document.getElementById('search').addEventListener('input', render);
 document.getElementById('cat-filter').addEventListener('change', render);
 document.getElementById('sort-sel').addEventListener('change', render);
 
-// Restore API key input
-/*
-const savedKey = getApiKey();
-if (savedKey) document.getElementById('api-key-input').value = savedKey;
-updateApiIndicator();
-*/
 // Service worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(()=>{});
