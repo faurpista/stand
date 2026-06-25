@@ -851,6 +851,7 @@ function stopCamera() {
 window.stopCamera = stopCamera;
 
 function snapAndAnalyze() {
+  window.isAnalyzing = false;
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
   const max_size = 800;
