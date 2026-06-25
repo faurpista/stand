@@ -522,28 +522,7 @@ header {
 <!-- 1. LÉPÉS: Megmondjuk a böngészőnek, honnan töltse le a Google programját (Ez a térkép) -->
 
 <script  type="module">
-/*
-  document.addEventListener("DOMContentLoaded", () => {
-    // 1. Fájl feltöltés mező figyelése
-    const fileInput = document.getElementById('file-upload-input');
-    if (fileInput) {
-      fileInput.addEventListener('change', handleFileUpload);
-    }
 
-    // 2. Az Új üveg hozzáadása gomb figyelése (BEKERÜLT IDE!)
-    const addBottleBtn = document.getElementById('btn-add-bottle');
-    if (addBottleBtn) {
-        addBottleBtn.addEventListener('click', () => {
-            openModal();
-        });
-    }
-    
-    // 3. BIZTONSÁGI LÉPÉS: Itt indítsd el az adatok betöltését és a rajzolást is,
-    // hogy a telefonon biztosan legyen leltár induláskor!
-    if (typeof loadData === "function") loadData(); 
-    if (typeof render === "function") render();
-});
-*/
 document.addEventListener("DOMContentLoaded", () => {
     
   // 1. Fájl feltöltés mező figyelése
@@ -564,17 +543,35 @@ document.addEventListener("DOMContentLoaded", () => {
   // Mivel a törlés gombok a kártyákon vannak, amik dinamikusan jönnek létre,
   // a legjobb, ha a teljes dokumentumot figyeljük a kattintásra!
   document.body.addEventListener('click', (event) => {
-      // Megnézzük, hogy a kattintott elemen vagy annak szülőjén rajta van-e a törlés osztály/ID
-      // Cseréld ki a '.btn-delete' részt a te törlés gombod pontos osztályára vagy ID-jára!
-      const deleteBtn = event.target.closest('.del-btn') || event.target.closest('[data-action="delete"]');
-      
-      if (deleteBtn) {
-          // Kiszedjük az üveg ID-ját a gomb attribútumából (pl. <button data-id="12">)
-          const bottleId = deleteBtn.getAttribute('data-id');
-          if (bottleId && typeof deleteBottle === "function") {
-              deleteBottle(bottleId);
-          }
-      }
+      // 1. Megnézzük, hogy a törlés gombra kattintottak-e
+    const deleteBtn = event.target.closest('[data-action="delete"]');
+    if (deleteBtn) {
+        event.stopPropagation(); // megállítjuk, hogy ne nyissa meg a szerkesztést is
+        const id = deleteBtn.getAttribute('data-id');
+        
+        if (typeof window.deleteBottle === "function") {
+            window.deleteBottle(id);
+        } else {
+            // Ha a script elszállt, kézzel is lefuthat a törlés mentőövként:
+            if (typeof bottles !== 'undefined') {
+                bottles = bottles.filter(x => x.id != id);
+                if (typeof save === "function") save();
+                if (typeof render === "function") render();
+            }
+        }
+        return; // kilépünk, hogy a kártya kattintás ne fusson le
+    }
+
+    // 2. Megnézzük, hogy magára a kártyára kattintottak-e (szerkesztés)
+    const cardElement = event.target.closest('[data-action="edit"]');
+    if (cardElement) {
+        const id = cardElement.getAttribute('data-id');
+        if (typeof window.startEdit === "function") {
+            window.startEdit(id);
+        } else if (typeof window.openModal === "function") {
+            window.openModal(id);
+        }
+    }
   });
 
   // 4. Kezdő adatok betöltése és felület kirajzolása
@@ -680,42 +677,6 @@ function bottleSVG(pct, cat) {
   </svg>`;
 }
 
-/*
-function bottleSVG(pct, cat) {
-  // 🚨 BIZTONSÁGI JAVÍTÁS: Ha a 'cat' (üveg ID) hiányzik vagy nem szöveg, adunk neki egy alapértelmezett értéket, hogy ne omoljon össze
-  //const safeCat = cat ? String(cat) : 'unknown-bottle';
-  let resolvedCat = cat;
-  let uid = cat; // Alapértelmezetten maga a cat paraméter lesz az egyedi ID alapja
-
-  // 1. Megkeressük a bottles tömbben azt az elemet, aminek az 'id'-ja egyezik a paraméterrel
-  if (typeof bottles !== 'undefined' && bottles) {
-    const foundBottle = bottles.find(b => b.id === cat || b.id == cat);
-    if (foundBottle) {
-      resolvedCat = foundBottle.cat; // Megvan a szöveges kategória: "bor", "gin", stb.
-      uid = foundBottle.id;        // Az üveg teljesen egyedi ID-ja a maszkhoz
-    }
-  }
-
-  // 🚨 BIZTONSÁGI JAVÍTÁS: Ha a kategória hiányzik vagy nem szöveg, adunk neki egy alapértelmezett értéket
-  const safeCat = resolvedCat ? String(resolvedCat) : 'unknown-bottle';
-  
-  // A szín kiválasztásánál megkeressük a kategória színét, ha nincs, adunk egy szép alapértelmezett színt
-  const col = (typeof CAT_COLORS !== 'undefined' ? CAT_COLORS[safeCat] : null) || '#2B6CB0';
-  
-  // Most már a safeCat változón (ami biztosan szöveg) hajtjuk végre a cserét a biztonságos egyedi ID-hoz (uid)
-  //const uid = safeCat.replace(/[^a-zA-Z0-9]/g, '');
-  
-  return `<svg class="bottle-svg" viewBox="0 0 44 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs><clipPath id="cp${uid}">
-      <path d="M14 28 Q10 35 8 45 L8 90 Q8 96 14 96 L30 96 Q36 96 36 90 L36 45 Q34 35 30 28 L28 16 L26 10 L18 10 L16 16 Z"/>
-    </clipPath></defs>
-    <path d="M14 28 Q10 35 8 45 L8 90 Q8 96 14 96 L30 96 Q36 96 36 90 L36 45 Q34 35 30 28 L28 16 L26 10 L18 10 L16 16 Z" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-    <rect x="8" y="${62 - pct*0.55}" width="28" height="${pct*0.55 + 34}" fill="${col}" opacity="0.75" clip-path="url(#cp${uid})"/>
-    <rect x="18" y="5" width="8" height="7" rx="2" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
-    <line x1="14" y1="26" x2="30" y2="26" stroke="rgba(255,255,255,0.15)" stroke-width="0.8"/>
-  </svg>`;
-}
-*/
 function filteredSorted() {
   const q = (document.getElementById('search').value||'').toLowerCase();
   const cat = document.getElementById('cat-filter').value;
