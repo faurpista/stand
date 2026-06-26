@@ -718,9 +718,9 @@ function render() {
   grid.innerHTML = list.map(b => {
     const cl = Math.round(b.size *(b.pct || 0) / 100);
     const safeId = b.id;
-    return `<div class="bottle-card ${statusClass(b.pct)}" onclick="startEdit(${b.id})">
+    return `<div class="bottle-card ${statusClass(b.pct)}" onclick="startEdit('${b.id}')">
       <div class="status-dot" style="background:${statusColor(b.pct)}"></div>
-      <button class="del-btn" onclick="event.stopPropagation();deleteBottle(${b.id})" title="Törlés">✕</button>
+      <button class="del-btn" onclick="event.stopPropagation();deleteBottle('${b.id}')" title="Törlés">✕</button>
       <div class="bottle-visual">${bottleSVG(b.pct || 0, b.id)}</div>
       <div class="bottle-name">${b.name}</div>
       <div class="bottle-cat">${b.cat}</div>
