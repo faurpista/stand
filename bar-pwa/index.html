@@ -1278,8 +1278,18 @@ document.getElementById('sort-sel').addEventListener('change', render);
 
 // Service worker
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  window.addEventListener('load', () => {
+    // Az időbélyeg (Date.now()) miatt minden egyes megnyitáskor új URL-nek látja a böngésző
+    navigator.serviceWorker.register('./sw.js?v=' + Date.now())
+      .then(reg => {
+        console.log('SW regisztrálva!', reg);
+        // Kényszerítjük a háttérben lévő SW frissítés ellenőrzését
+        reg.update(); 
+      })
+      .catch(err => console.error('SW hiba:', err));
+  });
 }
+
 
 function updateClock() {
   const now = new Date();
