@@ -1391,7 +1391,8 @@ async function saveProgress() {
       }
   }, 3000);
 }
-
+window.saveProgress = saveProgress;
+  
 function updateClock() {
   const now = new Date();
   
