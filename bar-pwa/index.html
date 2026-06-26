@@ -730,12 +730,12 @@ function render() {
       </div>
       <div class="vol-display">~<strong>${cl} cl</strong> / ${b.size} cl</div>
       <div class="adj-row">
-        <button class="adj-btn" onclick="event.stopPropagation();adj(${b.id},-5)">−</button>
+        <button class="adj-btn" onclick="event.stopPropagation();adj('${b.id}',-5)">−</button>
         <input class="pct-input" type="number" value="${b.pct || 0}" min="0" max="100"
           onclick="event.stopPropagation()"
           onchange="if(typeof setPct==='function') setPct('${safeId}',this.value)"
           onkeydown="event.stopPropagation()">
-        <button class="adj-btn" onclick="event.stopPropagation();adj(${safeId},5)">+</button>
+        <button class="adj-btn" onclick="event.stopPropagation();adj('${safeId}',5)">+</button>
       </div>
       <div class="ai-badge" onclick="event.stopPropagation();quickScan('${safeId}')" title="AI scan">🤖</div>
     </div>`;
@@ -1280,7 +1280,7 @@ document.getElementById('sort-sel').addEventListener('change', render);
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     // Az időbélyeg (Date.now()) miatt minden egyes megnyitáskor új URL-nek látja a böngésző
-    navigator.serviceWorker.register('./sw1.js?v=' + Date.now())
+    navigator.serviceWorker.register('./sw.js?v=' + Date.now())
       .then(reg => {
         console.log('SW regisztrálva!', reg);
         // Kényszerítjük a háttérben lévő SW frissítés ellenőrzését
