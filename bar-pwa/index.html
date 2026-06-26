@@ -1332,6 +1332,24 @@ async function initApp() {
         } else {
             console.log("Nincs mentés a felhőben, alapértelmezett lista betöltése.");
             // Ide jön a 'let bottles = [ ... ]' listád, amit legutóbb javítottunk
+          let bottles = JSON.parse(localStorage.getItem('bar_bottles') || 'null') || [
+{ id: "jagermeister_1L", name: "Jägermeister 1L", size: 100, currentCl: 0, pct: 0 },
+{ id: "absolut_vodka_07L", name: "Absolut Vodka 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "jack_daniels_07L", name: "Jack Daniel's 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "bacardi_carta_blanca_1L", name: "Bacardi Carta Blanca 1L", size: 100, currentCl: 0, pct: 0 },
+{ id: "captain_morgan_07L", name: "Captain Morgan Spiced 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "baileys_original_07L", name: "Baileys Original 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "unicum_05L", name: "Unicum 0.5L (Gömb)", size: 50, currentCl: 0, pct: 0 },
+{ id: "gin_beefeater_07L", name: "Beefeater Gin 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "tequila_olmecca_07L", name: "Olmeca Tequila 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "jameson_whiskey_1L", name: "Jameson Whiskey 1L", size: 100, currentCl: 0, pct: 0 },
+{ id: "finlandia_vodka_07L", name: "Finlandia Vodka 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "malibu_rum_07L", name: "Malibu Rum 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "hennessy_cognac_07L", name: "Hennessy Cognac 0.7L", size: 70, currentCl: 0, pct: 0 },
+{ id: "aperol_1L", name: "Aperol 1L", size: 100, currentCl: 0, pct: 0 },
+{ id: "tatratea_original_07L", name: "Tatratea Original 0.7L", size: 70, currentCl: 0, pct: 0 }
+];
+
         }
         
         // FONTOS: Itt hívd meg azt a függvényedet, ami kirajzolja a gombokat/italokat!
