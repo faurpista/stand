@@ -1309,13 +1309,13 @@ async function initApp() {
         }
         
         // FONTOS: Itt hívd meg azt a függvényedet, ami kirajzolja a gombokat/italokat!
-        renderBottles(); 
+        render(); 
 
     } catch (error) {
         console.error("Nem sikerült elérni a szervert, offline mód (localStorage):", error);
         // Biztonsági játék: Ha nincs net vagy áll a szerver, olvasson a localStorage-ból
         bottles = JSON.parse(localStorage.getItem('bar_bottles')) || defaultBottles;
-        renderBottles();
+        render();
     }
 }
 
