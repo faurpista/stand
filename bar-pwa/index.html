@@ -1280,7 +1280,7 @@ document.getElementById('sort-sel').addEventListener('change', render);
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     // Az időbélyeg (Date.now()) miatt minden egyes megnyitáskor új URL-nek látja a böngésző
-    navigator.serviceWorker.register('./sw.js?v=' + Date.now())
+    navigator.serviceWorker.register('./sw1.js?v=' + Date.now())
       .then(reg => {
         console.log('SW regisztrálva!', reg);
         // Kényszerítjük a háttérben lévő SW frissítés ellenőrzését
