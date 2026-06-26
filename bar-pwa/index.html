@@ -1290,6 +1290,59 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+const API_URL = "https://ocsi66-deep-stand.hf.space"; 
+
+// Ezt a függvényt hívd meg az oldal betöltésekor (pl. a window.onload-ban)
+async function initApp() {
+    try {
+        console.log("Adatok letöltése a Hugging Face-ről...");
+        const response = await fetch(`${API_URL}/load`);
+        const cloudData = await response.json();
+
+        // Ha van fent mentett adat, azt használjuk, ha nincs, a beépített alapértelmezettet
+        if (cloudData && cloudData.length > 0) {
+            bottles = cloudData;
+            console.log("Sikeresen betöltve a felhőből!");
+        } else {
+            console.log("Nincs mentés a felhőben, alapértelmezett lista betöltése.");
+            // Ide jön a 'let bottles = [ ... ]' listád, amit legutóbb javítottunk
+        }
+        
+        // FONTOS: Itt hívd meg azt a függvényedet, ami kirajzolja a gombokat/italokat!
+        renderBottles(); 
+
+    } catch (error) {
+        console.error("Nem sikerült elérni a szervert, offline mód (localStorage):", error);
+        // Biztonsági játék: Ha nincs net vagy áll a szerver, olvasson a localStorage-ból
+        bottles = JSON.parse(localStorage.getItem('bar_bottles')) || defaultBottles;
+        renderBottles();
+    }
+}
+
+// Alkalmazás indítása
+document.addEventListener("DOMContentLoaded", initApp);
+
+async function saveProgress() {
+  // 1. Mentünk helyileg a biztonság kedvéért
+  localStorage.setItem('bar_bottles', JSON.stringify(bottles));
+
+  // 2. Elküldjük a Hugging Face FastAPI szervernek
+  try {
+      const response = await fetch(`${API_URL}/save`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bottles)
+      });
+      const result = await response.json();
+      if (result.status === "success") {
+          console.log("Felhő mentés sikeres!");
+      } else {
+          console.error("Szerver hiba:", result.message);
+      }
+  } catch (error) {
+      console.error("Hálózati hiba a mentés során:", error);
+  }
+}
 
 function updateClock() {
   const now = new Date();
