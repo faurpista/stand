@@ -337,6 +337,28 @@ header {
 }
 .spinner.active { display:block; }
 @keyframes spin { to { transform:rotate(360deg); } }
+
+.save-button {
+  background-color: #238636; /* Szép zöld szín */
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.save-button:hover {
+  background-color: #2ea043; /* Világosabb zöld, ha ráviszed az egeret */
+}
+
+.save-button:disabled {
+  background-color: #6e7681; /* Szürke, ha épp ment a háttérben */
+  cursor: not-allowed;
+}
+
 </style>
 </head>
 <body>
@@ -353,6 +375,10 @@ header {
       <button class="icon-btn" onclick="exportData()" title="Exportálás">⬇</button>
     <!-- <button class="icon-btn" onclick="openModal()" title="Új üveg">＋</button>--> 
       <button id="btn-add-bottle" class="icon-btn" title="Új üveg">+</button>
+      <!-- Felhő Mentés Gomb -->
+      <button id="save-btn" onclick="saveProgress()" class="save-button">
+        ☁️ Mentés a felhőbe
+      </button>
     </div>
   </header>
 
@@ -1323,25 +1349,47 @@ async function initApp() {
 document.addEventListener("DOMContentLoaded", initApp);
 
 async function saveProgress() {
-  // 1. Mentünk helyileg a biztonság kedvéért
+  const btn = document.getElementById('save-btn');
+  if (btn) {
+      btn.disabled = true;
+      btn.innerText = "⏳ Mentés folyamatban...";
+  }
+
+  // 1. Mentés local storage-ba is biztonságként
   localStorage.setItem('bar_bottles', JSON.stringify(bottles));
 
-  // 2. Elküldjük a Hugging Face FastAPI szervernek
+  // 2. Mentés a Hugging Face FastAPI szerverre
   try {
       const response = await fetch(`${API_URL}/save`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(bottles)
       });
+      
       const result = await response.json();
+      
       if (result.status === "success") {
-          console.log("Felhő mentés sikeres!");
+          if (btn) {
+              btn.innerText = "✅ Sikeresen elmentve!";
+              btn.style.backgroundColor = "#2ea043";
+          }
       } else {
+          if (btn) btn.innerText = "❌ Szerver hiba!";
           console.error("Szerver hiba:", result.message);
       }
   } catch (error) {
+      if (btn) btn.innerText = "❌ Hálózati hiba!";
       console.error("Hálózati hiba a mentés során:", error);
   }
+
+  // 3. 3 másodperc múlva visszaállítjuk a gombot alaphelyzetbe
+  setTimeout(() => {
+      if (btn) {
+          btn.disabled = false;
+          btn.innerText = "☁️ Mentés a felhőbe";
+          btn.style.backgroundColor = "#238636";
+      }
+  }, 3000);
 }
 
 function updateClock() {
