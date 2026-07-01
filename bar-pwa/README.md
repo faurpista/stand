@@ -26,8 +26,8 @@ A projekt működéséhez az alábbi fájlokat kell feltöltened a választott t
 ---
 
 ## Technikai adatok
-- **AI:** Google Gemini 2.5 Flash (vision)
-- **Adattárolás:** LocalStorage (eszközön marad, nem tölt fel semmit)
+- **AI:** Saját AI modell()
+- **Adattárolás:** LocalStorage, Hugging Face(felhő) (eszközön marad, nem tölt fel semmit)
 - **PWA:** Service Worker + Web App Manifest
 - **Kamera:** MediaDevices API (hátsó kamera preferált)
 
