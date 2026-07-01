@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <div style="width: 80%; max-width: 1000px; margin: 0 auto;">
+    <div style="width: 100%; max-width: 800px; height: auto; margin: 0 auto; position: relative;">
         <!-- Ide ágyazódik be a diagram -->
         <canvas id="myChart"></canvas>
     </div>
@@ -40,6 +40,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: true,
                 scales: {
                     y: {
                         beginAtZero: true,
